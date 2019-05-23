@@ -19,6 +19,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
     <flow name="mavenFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/hello" doc:name="HTTP" allowedMethods="GET"/>
         <set-payload value="Hello Maven" doc:name="Set Payload"/>
+        <logger message="************ END OF mavenFlow ************" level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="retrieveFlights">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/flights" allowedMethods="GET" doc:name="HTTP"/>
@@ -28,11 +29,13 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
         <jms:outbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS"/>
+        <logger message="************ END OF retrieveFlights ************" level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="maven-projectFlow">
         <jms:inbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS">
             <jms:client-ack-transaction action="NONE"/>
         </jms:inbound-endpoint>
         <logger message="#[message.payloadAs(java.lang.String)]" level="INFO" doc:name="Logger"/>
+        <logger message="************ END OF maven-projectFlow ************" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
